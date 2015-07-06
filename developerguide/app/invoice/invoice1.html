@@ -1,0 +1,14 @@
+<div ng-init="qty=1; cost=2">
+	<b>Invoice</b>
+	<div>
+		<label for="qty">Quantity:</label>
+		<input type="number" id="qty" ng-model="qty" min="0" />
+	</div>
+	<div>
+		<label for="cost">Cost:</label>
+		<input type="number" id="cost" ng-model="cost" />
+	</div>
+	<div>
+		<b>Total:</b> {{ qty * cost | currency }}
+	</div>
+</div>

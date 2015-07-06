@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
+<head>
+    <meta charset="utf-8" />
+    <title>Hello AngularJS</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <div ng-controller="mainController">
+            <form name="myForm">
+                <input type="text" ng-model="field" name="myField" required minlength="5" />
+                <div ng-messages="myForm.myField.$error">
+                    <div class="alert alert-danger" ng-message="required">You did not enter a field.</div>
+                    <div class="alert alert-danger" ng-message="minlength">The value entered is too short</div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-messages.min.js"></script>
+    <script src="js/angular-resource.min.js"></script>
+    <script src="service_dp.js"></script>
+</body>
+</html>
+
