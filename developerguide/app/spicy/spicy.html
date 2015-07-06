@@ -1,0 +1,11 @@
+<div>
+	<div>
+		Current Spice: {{spice}}
+		<br />
+		<input type="checkbox" ng-model="isCustom" readonly>Custom?</input>
+	</div>
+	<button ng-repeat="spice in spices" ng-click="changeSpice(spice)">{{spice}}</button>
+	<br />
+	<input type="text" ng-model="customSpice" />
+	<button ng-click="changeSpice(customSpice)">Custom Spice</button>
+</div>
