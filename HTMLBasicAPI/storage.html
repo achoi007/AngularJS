@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="StorageApp">
+<head>
+    <meta charset="utf-8" />
+    <title>Web Storage API</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body data-ng-controller="StorageCtrl">
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Storage API</h1>
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <label for="name">Name:</label>
+        <input type="text" data-ng-model="person.name" id="name" />
+        <br />
+        <label for="height">Height:</label>
+        <input type="number" data-ng-model="person.height" id="height" min="1" />
+        <br />
+        <label for="score">Score:</label>
+        <input type="number" data-ng-model="score" id="score" min="0" max="100" />
+        <br />
+        <label for="localStorage">Is Local Storage?</label>
+        <input type="checkbox" data-ng-model="isLocalStorage" id="localStorage" />
+        <button class="btn btn-default" data-ng-click="save()">Save</button>
+        <button class="btn btn-default" data-ng-click="load()">Load</button>
+        <button class="btn btn-default" data-ng-click="clear()">Clear</button>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script>
+        var myApp = angular.module('StorageApp', []);
+
+        myApp.controller('StorageCtrl', function ($scope) {
+
+            $scope.person = {
+                name: '',
+                height: 1,
+            };
+
+            $scope.score = 0;
+
+            $scope.isLocalStorage = true;
+
+            var getStorage = function () {
+                return $scope.isLocalStorage ? localStorage : sessionStorage;
+            };
+
+            $scope.save = function () {
+                var storage = getStorage();
+                storage.person = JSON.stringify($scope.person);
+                storage.score = $scope.score;
+            };
+
+            $scope.load = function () {
+                var storage = getStorage();
+                $scope.person = JSON.parse(storage.person);
+                $scope.score = storage.score;
+            };
+
+            $scope.clear = function () {
+                getStorage().clear();
+            };
+        });
+    </script>
+</body>
+</html>

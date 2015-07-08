@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Local File API</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body ng-app="FileApp">
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Local File API</h1>
+        </div>
+
+        <div class="row col-md-12 panel panel-default" ng-controller="FileListCtrl as ctrl">
+            <div class="panel-heading">File List</div>
+            <div class="panel-body">
+                <label for="files">Select one or more files:</label>
+                <input type="file" multiple id="files" />
+                <br />
+                <button ng-click="ctrl.showDetails()">Show Details</button>
+                <br />
+                <ul>
+                    <li ng-repeat="detail in ctrl.details">
+                        Name:<code>{{detail.name}}</code>
+                        Size:<span>{{detail.size}}</span>
+                        Type:<span>{{detail.type}}</span>
+                        Last Mod Date:<span>{{detail.lastModifiedDate}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row col-md-12 panel panel-default" ng-controller="FileCtrl as ctrl">
+            <div class="panel-heading">File</div>
+            <div class="panel-body">
+                <label for="file">Choose single file:</label>
+                <input type="file" id="file" />
+                <br />
+                <button ng-click="ctrl.showContent()">Show Content</button>
+                <br />
+                Content: <span>{{ctrl.content}}</span>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script>
+        var myApp = angular.module('FileApp', []);
+
+        myApp.controller('FileListCtrl', function ($log) {
+            var self = this;
+
+            this.details = [];
+
+            this.showDetails = function () {
+                self.details = document.querySelector('#files').files;
+                $log.info("Number of files: ", self.details.length);
+            };
+        });
+
+        myApp.controller('FileCtrl', function ($log, $scope) {
+
+            var self = this;
+            var reader = new FileReader();
+
+            this.content = '';
+
+            reader.onload = function (e) {
+                $log.info("Loaded content");
+                $scope.$apply(function () {
+                    self.content = e.target.result.substring(0, 100);
+                });
+            };
+
+            this.showContent = function () {
+                var file = document.querySelector('#file').files[0];
+                reader.readAsText(file);
+            };
+
+            // Just some code on how to watch controller as a class member variable
+            $scope.$watch(function () {
+                return self.content;
+            }, function (newVal, oldVal) {
+                $log.info("content changed to ", newVal);
+            });
+        });
+    </script>
+</body>
+</html>

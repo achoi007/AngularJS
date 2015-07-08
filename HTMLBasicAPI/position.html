@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Get Position</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body ng-app="PositionApp">
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Get Position</h1>
+        </div>
+        <div class="panel-group" id="collapse">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#collapse" href="#collapse-one">
+                            Current Position
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-one" class="panel-collapse collapse in">
+                    <div class="panel-body" ng-controller="CurrPosCtrl as ctrl">
+                        Pos: <span>{{ ctrl.position }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#collapse" href="#collapse-two">
+                            Watch Position
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-two" class="panel-collapse collapse">
+                    <div class="panel-body" ng-controller="WatchPosCtrl as ctrl">
+                        Pos: <span>{{ ctrl.position }}</span>
+                        <br />
+                        <button class="btn btn-default" ng-click="ctrl.startWatch()" ng-disabled="ctrl.watchId != 0">Start Watch</button>
+                        <button class="btn btn-default" ng-click="ctrl.stopWatch()" ng-disabled="ctrl.watchId == 0">Stop Watch</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#collapse" href="#collapse-three">
+                            Google Map
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-three" class="panel-collapse collapse">
+                    <div class="panel-body" ng-controller="MapPosCtrl as ctrl">
+                        <img ng-src="{{ctrl.imageUrl}}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script>
+        var myApp = angular.module('PositionApp', []);
+
+        function errorPos(err) {
+            var info = "Error during geolocation: "
+            switch (err.code) {
+                case error.TIMEOUT:
+                    info += "Timeout";
+                    break;
+                case error.PERMISSION_DENIED:
+                    info += "Permission denied";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    info += "Location unavailable";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    info += "Unknown error";
+                    break;
+            }
+
+            console.log(info);
+        }
+
+        myApp.controller('CurrPosCtrl', function ($scope, $log) {
+
+            var self = this;
+
+            this.position = {};
+
+            function showPos(pos) {
+                $log.info("Got position", pos);
+                $scope.$apply(function () {
+                    self.position = {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude,
+                    };
+                });
+            };
+
+            navigator.geolocation.getCurrentPosition(showPos, errorPos);
+        });
+
+        myApp.controller('WatchPosCtrl', function ($scope, $log) {
+
+            var self = this;
+
+            this.position = {};
+            this.watchId = 0;
+
+            function showPos(pos) {
+                $log.info("Got position", pos);
+                $scope.$apply(function () {
+                    self.position = {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude,
+                    };
+                });
+            };
+
+            this.startWatch = function () {
+                self.watchId = navigator.geolocation.watchPosition(showPos, errorPos);
+            };
+
+            this.stopWatch = function () {
+                navigator.geolocation.clearWatch(self.watchId);
+                self.watchId = 0;
+            };
+        });
+
+        myApp.controller('MapPosCtrl', function ($scope, $log) {
+
+            var self = this;
+
+            this.position = {};
+            this.imageUrl = '';
+
+            function showPos(pos) {
+                $log.info("Got position", pos);
+                $scope.$apply(function () {
+                    self.position = {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude,
+                    };
+                });
+            };
+
+            $scope.$watch(function () {
+                return self.position;
+            }, function (newVal, oldVal) {
+                var pos = self.position.latitude + "," + self.position.longitude;
+                self.imageUrl = 'http://maps.googleapis.com/maps/api/staticmap?center=' +
+                    pos + '&zoom=14&size=400x300&sensor=false';
+                $log.info("ImageUrl: ", self.imageUrl);
+            });
+
+            navigator.geolocation.getCurrentPosition(showPos, errorPos);
+        });
+
+
+    </script>
+</body>
+</html>
