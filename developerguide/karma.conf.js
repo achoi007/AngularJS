@@ -10,6 +10,7 @@ module.exports = function(config){
       'app/components/**/*.js',
       'app/view*/**/*.js',
       'app/spicy/**/*.js',
+      'app/password/**/*.js',
     ],
 
     autoWatch : true,
